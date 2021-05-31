@@ -1,0 +1,10 @@
+syntax = "proto3";
+package proto;
+
+message  LogModel{
+  repeated int32 logId = 1;
+  string clientIp = 2;
+  string serverIp = 3;
+  optional [9]string tags =4;
+
+}
