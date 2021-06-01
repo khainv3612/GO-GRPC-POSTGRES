@@ -1,10 +1,20 @@
 syntax = "proto3";
 package proto;
 
+option go_package = "./proto";
+
 message  LogModel{
-  repeated int32 logId = 1;
+  int32 logId = 1;
   string clientIp = 2;
   string serverIp = 3;
-  optional [9]string tags =4;
+  repeated string tags = 4;
+}
 
+message LogModels{
+  repeated LogModel log = 1;
+}
+
+service LogManage {
+  rpc CreateLog(LogModel) returns (LogModel) {};
+  rpc FetchLog(LogModel) returns (stream LogModel){};
 }
