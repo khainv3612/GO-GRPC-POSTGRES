@@ -15,8 +15,12 @@ type LogManageServer struct {
 	DB *sql.DB
 }
 
-func (l LogManageServer) CreateLog(ctx context.Context, model *pb.LogModel) (*pb.LogModel, error) {
-	panic("implement me")
+func (s LogManageServer) CreateLog(ctx context.Context, log *pb.LogModel) (*pb.LogModel, error) {
+	_, err := s.DB.Exec(`INSERT INTO "LOGGING"(client_ip,server_ip,tags) VALUES($1,$2,$3)`, log.ClientIp, log.ServerIp, pq.Array(log.Tags))
+	if err != nil {
+		return nil, err
+	}
+	return log, nil
 }
 
 func (l LogManageServer) FetchLog(model *pb.LogModel, server pb.LogManage_FetchLogServer) error {
@@ -42,10 +46,6 @@ func ConnectDB() *sql.DB {
 	return db
 }
 
-func AddLog(s *LogManageServer, log *pb.LogModel) (*pb.LogModel, error) {
-	_, err := s.DB.Exec(`INSERT INTO "LOGGING"(client_ip,server_ip,tags) VALUES($1,$2,$3)`, log.ClientIp, log.ServerIp, pq.Array(log.Tags))
-	if err != nil {
-		return nil, err
-	}
-	return log, nil
-}
+//func (s *LogManageServer) CreateLog(log *pb.LogModel) (*pb.LogModel, error) {
+//
+//}

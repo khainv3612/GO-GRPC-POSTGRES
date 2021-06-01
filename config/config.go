@@ -9,5 +9,5 @@ const (
 	Search_path = "public"
 	PortServer  = "localhost:1002"
 
-	Addr  = "localhost:10024"
+	Addr  = "localhost:1002"
 )

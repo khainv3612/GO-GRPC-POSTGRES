@@ -20,7 +20,7 @@ func main() {
 	logService := service.LogManageServer{
 		DB: service.ConnectDB(),
 	}
-	proto.RegisterLogManageServer(server, logService)
+	proto.RegisterLogManageServer(server, &logService)
 
 	fmt.Println("=====> Server started.")
 	server.Serve(lis)
