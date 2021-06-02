@@ -25,21 +25,28 @@ func (s LogManageServer) CreateLog(ctx context.Context, log *pb.LogModel) (*pb.L
 }
 
 func (s LogManageServer) FetchLog(ctx context.Context, model *pb.LogModel) (*pb.LogModels, error) {
-	sql := `SELECT log_id,client_ip,server_ip,tags FROM "LOGGING" WHERE 1=1 `
+	sql := `SELECT log_id,client_ip,server_ip,tags::text[] FROM "LOGGING" WHERE 1=1 `
 
-	if &model.LogId != nil {
+	//dto := &pb.LogModel{
+	//	LogId:    model.LogId,
+	//	ClientIp: model.ClientIp,
+	//	ServerIp: model.ServerIp,
+	//	Tags:     model.Tags,
+	//}
+
+	if &model.LogId != nil && model.LogId != 0 {
 		//sql += ` AND log_id = $1 `
 		sql += " AND log_id = " + strconv.Itoa(int(model.LogId))
 	}
-	if &model.ClientIp != nil {
+	if &model.ClientIp != nil && model.ClientIp != "" {
 		//sql += ` AND client_ip = $2 `
 		sql += " AND client_ip = '" + model.ClientIp + "'"
 	}
-	if &model.ServerIp != nil {
+	if &model.ServerIp != nil && model.ServerIp != "" {
 		//sql += ` AND server_ip = $3 `
-		sql += " AND server_ip = '" + model.ServerIp+ "'"
+		sql += " AND server_ip = '" + model.ServerIp + "'"
 	}
-	if &model.Tags != nil {
+	if &model.Tags != nil && len(model.Tags) > 0 {
 		//sql += ` AND tags @> = $4`
 		var tags string
 		tags = string("'{")
@@ -64,7 +71,7 @@ func (s LogManageServer) FetchLog(ctx context.Context, model *pb.LogModel) (*pb.
 	var result []*pb.LogModel
 	for query.Next() {
 		log := pb.LogModel{}
-		err := query.Scan(&log.LogId, &log.ClientIp, &log.ServerIp, &log.Tags)
+		err := query.Scan(&log.LogId, &log.ClientIp, &log.ServerIp, pq.Array(&log.Tags))
 		if err != nil {
 			panic(err)
 		}

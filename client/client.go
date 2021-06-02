@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"google.golang.org/grpc"
 	"log"
+	"strings"
 )
 
 func main() {
@@ -17,9 +18,10 @@ func main() {
 	defer conn.Close()
 
 	log := &pb.LogModel{
-		ClientIp: "127.0.0.1",
-		ServerIp: "127.0.0.1",
-		Tags:     []string{"nhat", "oi"},
+		LogId: 76,
+		//ClientIp: "127.0.0.1",
+		//ServerIp: "127.0.0.1",
+		//Tags:     []string{"one"},
 	}
 
 	client := pb.NewLogManageClient(conn)
@@ -28,6 +30,21 @@ func main() {
 	//fmt.Println(logReturn)
 
 	logReturn, _ := client.FetchLog(context.Background(), log)
-	fmt.Println(logReturn)
+	prinResultSearch(logReturn.GetLog())
+}
+
+func prinResultSearch(lst []*pb.LogModel) {
+	if len(lst) == 0 {
+		fmt.Println("No result")
+		return
+	}
+	fmt.Println("\n-------------------------------------------------------------------------------------")
+	fmt.Printf("|%-10v|%-15v|%-15v|%-40v|\n", "LOG_ID", "CLIENT_IP", "SERVER_IP", "TAGS")
+	fmt.Println("-------------------------------------------------------------------------------------")
+	for _, log := range lst {
+		fmt.Printf("|%-10v|%-15v|%-15v|%-40v|\n", log.LogId, log.ClientIp, log.ServerIp, strings.Join(log.Tags, "-"))
+
+	}
+	fmt.Println("-------------------------------------------------------------------------------------")
 
 }
