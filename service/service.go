@@ -27,13 +27,6 @@ func (s LogManageServer) CreateLog(ctx context.Context, log *pb.LogModel) (*pb.L
 func (s LogManageServer) FetchLog(ctx context.Context, model *pb.LogModel) (*pb.LogModels, error) {
 	sql := `SELECT log_id,client_ip,server_ip,tags::text[] FROM "LOGGING" WHERE 1=1 `
 
-	//dto := &pb.LogModel{
-	//	LogId:    model.LogId,
-	//	ClientIp: model.ClientIp,
-	//	ServerIp: model.ServerIp,
-	//	Tags:     model.Tags,
-	//}
-
 	if &model.LogId != nil && model.LogId != 0 {
 		//sql += ` AND log_id = $1 `
 		sql += " AND log_id = " + strconv.Itoa(int(model.LogId))
@@ -101,7 +94,3 @@ func ConnectDB() *sql.DB {
 	fmt.Println("Successfully connected!")
 	return db
 }
-
-//func (s *LogManageServer) CreateLog(log *pb.LogModel) (*pb.LogModel, error) {
-//
-//}
