@@ -18,10 +18,10 @@ func main() {
 	defer conn.Close()
 
 	log := &pb.LogModel{
-		LogId: 76,
+		//LogId: 76,
 		//ClientIp: "127.0.0.1",
 		//ServerIp: "127.0.0.1",
-		//Tags:     []string{"one"},
+		Tags:     []string{"one","three"},
 	}
 
 	client := pb.NewLogManageClient(conn)
