@@ -24,7 +24,10 @@ func main() {
 
 	client := pb.NewLogManageClient(conn)
 
-	logReturn, _ := client.CreateLog(context.Background(), log)
+	//logReturn, _ := client.CreateLog(context.Background(), log)
+	//fmt.Println(logReturn)
+
+	logReturn, _ := client.FetchLog(context.Background(), log)
 	fmt.Println(logReturn)
 
 }

@@ -16,5 +16,5 @@ message LogModels{
 
 service LogManage {
   rpc CreateLog(LogModel) returns (LogModel) {};
-  rpc FetchLog(LogModel) returns (stream LogModel){};
+  rpc FetchLog(LogModel) returns (LogModels){};
 }

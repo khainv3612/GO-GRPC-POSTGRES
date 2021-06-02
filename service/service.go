@@ -9,6 +9,7 @@ import (
 	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 	//"golang.org/x/net/context"
+	"strconv"
 )
 
 type LogManageServer struct {
@@ -23,8 +24,56 @@ func (s LogManageServer) CreateLog(ctx context.Context, log *pb.LogModel) (*pb.L
 	return log, nil
 }
 
-func (l LogManageServer) FetchLog(model *pb.LogModel, server pb.LogManage_FetchLogServer) error {
-	panic("implement me")
+func (s LogManageServer) FetchLog(ctx context.Context, model *pb.LogModel) (*pb.LogModels, error) {
+	sql := `SELECT log_id,client_ip,server_ip,tags FROM "LOGGING" WHERE 1=1 `
+
+	if &model.LogId != nil {
+		//sql += ` AND log_id = $1 `
+		sql += " AND log_id = " + strconv.Itoa(int(model.LogId))
+	}
+	if &model.ClientIp != nil {
+		//sql += ` AND client_ip = $2 `
+		sql += " AND client_ip = '" + model.ClientIp + "'"
+	}
+	if &model.ServerIp != nil {
+		//sql += ` AND server_ip = $3 `
+		sql += " AND server_ip = '" + model.ServerIp+ "'"
+	}
+	if &model.Tags != nil {
+		//sql += ` AND tags @> = $4`
+		var tags string
+		tags = string("'{")
+		index := 0
+		for _, tag := range model.Tags {
+			tags += tag
+			index++
+			if index < len(model.Tags) {
+				tags += string(",")
+			}
+		}
+		tags += string("}'")
+		sql += " AND tags @> " + tags
+	}
+	fmt.Println(sql)
+	query, err := s.DB.Query(sql)
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+	defer query.Close()
+	var result []*pb.LogModel
+	for query.Next() {
+		log := pb.LogModel{}
+		err := query.Scan(&log.LogId, &log.ClientIp, &log.ServerIp, &log.Tags)
+		if err != nil {
+			panic(err)
+		}
+		result = append(result, &log)
+	}
+	logs := pb.LogModels{
+		Log: result,
+	}
+	return &logs, nil
 }
 
 func ConnectDB() *sql.DB {
