@@ -17,7 +17,7 @@ type LogManageServer struct {
 }
 
 func (s LogManageServer) CreateLog(ctx context.Context, log *pb.LogModel) (*pb.LogModel, error) {
-	_, err := s.DB.Exec(`INSERT INTO "LOGGING"(client_ip,server_ip,tags) VALUES($1,$2,$3)`, log.ClientIp, log.ServerIp, pq.Array(log.Tags))
+	_, err := s.DB.Exec(`INSERT INTO LOGGING (client_ip,server_ip,tags) VALUES($1,$2,$3)`, log.ClientIp, log.ServerIp, pq.Array(log.Tags))
 	if err != nil {
 		return nil, err
 	}
@@ -25,7 +25,7 @@ func (s LogManageServer) CreateLog(ctx context.Context, log *pb.LogModel) (*pb.L
 }
 
 func (s LogManageServer) FetchLog(ctx context.Context, model *pb.LogModel) (*pb.LogModels, error) {
-	sql := `SELECT log_id,client_ip,server_ip,tags::text[] FROM "LOGGING" WHERE 1=1 `
+	sql := `SELECT log_id,client_ip,server_ip,tags::text[] FROM LOGGING WHERE 1=1 `
 
 	if &model.LogId != nil && model.LogId != 0 {
 		//sql += ` AND log_id = $1 `

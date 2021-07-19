@@ -5,9 +5,9 @@ const (
 	Port        = 5432
 	User        = "postgres"
 	Password    = "3612"
-	Dbname      = "test"
+	Dbname      = "postgres"
 	Search_path = "public"
-	PortServer  = "localhost:1002"
+	PortServer  = "localhost:3000"
 
-	Addr  = "localhost:1002"
+	Addr  = "localhost:3000"
 )
